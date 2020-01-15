@@ -7,15 +7,17 @@ class Grid extends React.Component {
     gridArray: []
   };
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.gridItemCount !== prevState.gridItemCount) {
-      return { gridItemCount: nextProps.gridItemCount };
-    } else return null;
+  componentDidMount() {
+    this.setState({ gridItemCount: this.props.gridItemCount }, () => {
+      this.handleGridUpdate();
+    });
   }
 
   componentDidUpdate(prevState) {
-    if (prevState.gridItemCount !== this.state.gridItemCount) {
-      this.handleGridUpdate();
+    if (prevState.gridItemCount !== this.props.gridItemCount) {
+      this.setState({ gridItemCount: this.props.gridItemCount }, () => {
+        this.handleGridUpdate();
+      });
     }
   }
 
@@ -24,7 +26,10 @@ class Grid extends React.Component {
   };
 
   handleGridUpdate = () => {
-    this.setState({ gridArray: new Array(this.state.gridItemCount).fill("") });
+    this.state.gridItemCount > 0 &&
+      this.setState({
+        gridArray: new Array(this.state.gridItemCount).fill("")
+      });
   };
 
   render() {
@@ -37,8 +42,6 @@ class Grid extends React.Component {
             value={this.state.gridItemCount}
             className="input--field"
             type="number"
-            inputMode="numeric"
-            pattern="[0-9]*"
             onChange={this.handleGridCountChange}
           />
           <button className="update--button" onClick={this.handleGridUpdate}>
